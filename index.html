@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>FxOS Icon Generator</title>
+    <style>
+      body {
+        background: #F7F7F7;
+      }
+      canvas {
+        border: 1px dashed black;
+        background: white;
+      }
+      a {
+        cursor: pointer;
+      }
+    </style>
+    <script>
+      var ctx;
+
+      window.onload = function() {
+        var canvas = document.querySelector("canvas");
+        var a = document.querySelector("a");
+
+        ctx = canvas.getContext("2d");
+
+        a.addEventListener('click', function(ev) {
+          a.href = canvas.toDataURL();
+          a.download = "icon-256.png";
+        }, false);
+
+        document.querySelector("input").oninput = function() {
+          var c = hexToRgb(this.value);
+          draw(c.r,c.g,c.b);
+        };
+
+        draw(256,0,102); // #FF0066
+      };
+
+      function draw(r1,g1,b1) {
+        ctx.save();
+        var f = 0.9;
+        var r2 = Math.round(f * r1);
+        var g2 = Math.round(f * g1);
+        var b2 = Math.round(f * b1);  
+        var c1 = 'rgb(' + r1 + ',' + g1 + ',' + b1 + ')';
+        var c2 = 'rgb(' + r2 + ',' + g2 + ',' + b2 + ')';
+        var c3 = 'rgba(' + r2 + ',' + g2 + ',' + b2 + ',0)';
+
+        var grad = ctx.createLinearGradient(128, 256, 256, 128);
+        grad.addColorStop(0, c2);
+        grad.addColorStop(1, c3);
+
+        ctx.beginPath();
+        ctx.arc(128,128,128,0,Math.PI*2,true);
+        ctx.clip();  
+        ctx.fillStyle = c1;
+        ctx.fillRect(0,0,256,256);
+        ctx.beginPath();
+        ctx.arc(256,256,158,0,Math.PI*2,true);
+        ctx.clip();
+        ctx.fillStyle = grad;
+        ctx.fillRect(0,0,256,256);
+        ctx.restore();
+      }
+
+      function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null;
+      }
+    </script>
+  </head>
+  <body>
+    <canvas width="256" height="256"></canvas>
+    <input type="color"></input><a href="#">download</a>
+  </body>
+</html>
